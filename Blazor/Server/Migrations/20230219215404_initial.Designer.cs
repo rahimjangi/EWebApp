@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blazor.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230218223637_product_seeding")]
-    partial class product_seeding
+    [Migration("20230219215404_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,47 @@ namespace Blazor.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("Blazor.Shared.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Books",
+                            Url = "books"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Movies",
+                            Url = "movies"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Video Games",
+                            Url = "video-games"
+                        });
+                });
+
             modelBuilder.Entity("Blazor.Shared.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -30,6 +71,9 @@ namespace Blazor.Server.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -48,12 +92,15 @@ namespace Blazor.Server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Products");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            CategoryId = 3,
                             Description = "Description 1",
                             ImageUrl = "https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8&w=1000&q=80",
                             Price = 10.2m,
@@ -62,6 +109,7 @@ namespace Blazor.Server.Migrations
                         new
                         {
                             Id = 2,
+                            CategoryId = 2,
                             Description = "Description 2",
                             ImageUrl = "https://www.shutterstock.com/image-photo/three-asses-one-head-up-260nw-1565329723.jpg",
                             Price = 10.92m,
@@ -70,6 +118,7 @@ namespace Blazor.Server.Migrations
                         new
                         {
                             Id = 3,
+                            CategoryId = 3,
                             Description = "Description 3",
                             ImageUrl = "https://tinypng.com/images/social/website.jpg",
                             Price = 7.2m,
@@ -78,11 +127,50 @@ namespace Blazor.Server.Migrations
                         new
                         {
                             Id = 4,
+                            CategoryId = 3,
+                            Description = "Description 4",
+                            ImageUrl = "https://avatars.mds.yandex.net/i?id=84dbd50839c3d640ebfc0de20994c30d-4473719-images-taas-consumers&n=27&h=480&w=480",
+                            Price = 9.34m,
+                            Title = "Title4"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CategoryId = 3,
+                            Description = "Description 5",
+                            ImageUrl = "https://tinypng.com/images/social/website.jpg",
+                            Price = 7.2m,
+                            Title = "Title5"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CategoryId = 3,
+                            Description = "Description 3",
+                            ImageUrl = "https://tinypng.com/images/social/website.jpg",
+                            Price = 7.2m,
+                            Title = "Title3"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CategoryId = 3,
                             Description = "Description 4",
                             ImageUrl = "https://avatars.mds.yandex.net/i?id=84dbd50839c3d640ebfc0de20994c30d-4473719-images-taas-consumers&n=27&h=480&w=480",
                             Price = 9.34m,
                             Title = "Title4"
                         });
+                });
+
+            modelBuilder.Entity("Blazor.Shared.Product", b =>
+                {
+                    b.HasOne("Blazor.Shared.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }
