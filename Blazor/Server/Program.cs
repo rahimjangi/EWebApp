@@ -2,6 +2,7 @@ global using Microsoft.EntityFrameworkCore;
 global using Blazor.Shared;
 global using Blazor.Server.Data;
 global using Blazor.Server.Services.ProductService;
+global using Blazor.Server.Services.CategoryService;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Data.SqlClient;
 
@@ -21,6 +22,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IProductService,ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 var app = builder.Build();
 app.UseSwaggerUI();
