@@ -13,6 +13,8 @@ public class ProductService : IProductService
     }
     public List<Product> Products { get; set; }= new List<Product>();
 
+    public event Action ProductsChanged;
+
     public async Task<ServiceResponse<Product>> GetProduct(int productId)
     {
         var result =
@@ -20,13 +22,15 @@ public class ProductService : IProductService
         return result;
     }
 
-    public async Task GetProducts()
+    public async Task GetProducts(string? categoryUrl=null)
     {
-        var reresult 
-            = await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("/api/Product");
+        var reresult =categoryUrl==null?
+            await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("/api/Product")
+            : await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>($"/api/Product/category/{categoryUrl}");
         if (reresult!=null && reresult.Data!=null)
         {
             Products = reresult.Data;
         }
+        ProductsChanged.Invoke();
     }
 }
